@@ -1,0 +1,240 @@
+SITE CORE (to save into clubroom_site_core.txt) — Version v1.0
+bash
+Copy
+Edit
+SITE: Clubroom
+PURPOSE:
+  Clubroom is a web platform for student clubs and small organizations to centralize members, announcements, events, and resources so teams stop using scattered group chats and documents. Primary early users: high school & college club leaders and members.
+
+GOALS:
+  - MVP: Enable clubs to create pages, post announcements and events, manage members, and let students join via invite codes or school email.
+  - Short term traction goal: 3–6 clubs with 50+ active members each in the first 90 days.
+  - Long term: Provide multi-school deployments and a light admin/analytics layer; explore paid features for schools/orgs.
+
+PRIORITY FEATURES (MVP order):
+  1. Auth: email + school invite code; SSO (optional).
+  2. Club creation & page (title, description, logo, officers).
+  3. Announcements feed (pin, edit, archive).
+  4. Events & RSVP (calendar view, reminders).
+  5. Members list + roles (leader, officer, member).
+  6. Join via link or invite code; public/ private club setting.
+  7. Notifications (in-app & email digest).
+  8. Simple analytics (views, RSVPs, active members).
+  9. Search (clubs, members, events).
+  10. Settings (notification preferences, theme).
+
+USER ROLES & PRIMARY FLOWS:
+  - Guest: view public club pages, explore /features and /pricing.
+  - Student (member): join clubs, RSVP, comment on announcements.
+  - Club leader/officer: create club, post announcements & events, manage members and roles.
+  - School admin (future): invite schools, bulk user import, billing.
+
+CORE METRICS:
+  - DAU/MAU, Weekly active clubs, average members per club, RSVP conversion, retention (D7), invite acceptance rate.
+
+TECH STACK (MVP recommendation):
+  - Frontend: Next.js (app or pages), TypeScript, Tailwind CSS, React Query or SWR.
+  - Backend: Node/Express or Next.js API routes, TypeScript.
+  - DB: PostgreSQL (Prisma ORM).
+  - Auth: JWT + Refresh tokens; support school email verification or SSO later.
+  - Hosting: Vercel/Netlify for frontend, Railway/Heroku for backend if separate.
+  - Analytics: Plausible or PostHog; use Mixpanel later for product metrics.
+
+ROUTE MAP (file-system /frontend + RESTful API)
+  Frontend pages (Next.js style):
+    /                      -> Home / Hero
+    /features              -> Features index
+    /features/tools        -> Features / Tools
+    /features/integrations -> Features / Integrations
+    /how-it-works          -> How it works / onboarding flow
+    /how-it-works/onboarding -> step-by-step onboarding docs
+    /pricing               -> Pricing overview
+    /pricing/schools       -> School & district pricing
+    /pricing/nonprofit     -> Nonprofit discounts
+    /about                 -> About / Team
+    /blog                  -> Blog / Resources
+    /signup                -> Sign up (email, school invite)
+    /login                 -> Login
+    /dashboard             -> User dashboard (requires auth)
+    /dashboard/clubs/:clubId
+    /dashboard/clubs/:clubId/events
+    /dashboard/clubs/:clubId/announcements
+    /dashboard/clubs/:clubId/members
+    /profile/:userId
+
+  REST API (recommended style, JSON, JWT auth required on private routes):
+    POST   /api/auth/signup        -> body {email, password, inviteCode?}
+    POST   /api/auth/login         -> body {email, password} returns {accessToken, refreshToken}
+    POST   /api/auth/refresh       -> body {refreshToken}
+    GET    /api/users/:id
+    GET    /api/clubs
+    POST   /api/clubs              -> create club (leader only)
+    GET    /api/clubs/:id
+    PATCH  /api/clubs/:id
+    DELETE /api/clubs/:id
+    GET    /api/clubs/:id/members
+    POST   /api/clubs/:id/members  -> add member (invite)
+    DELETE /api/clubs/:id/members/:memberId
+    GET    /api/clubs/:id/events
+    POST   /api/clubs/:id/events
+    PATCH  /api/events/:eventId
+    DELETE /api/events/:eventId
+    GET    /api/announcements/:clubId
+    POST   /api/announcements/:clubId
+    PATCH  /api/announcements/:id
+    GET    /api/search?q=
+    GET    /api/analytics/clubs/:clubId?range=30d
+
+  REST GUIDELINES:
+    - Use nouns, not verbs: /api/clubs, not /api/createClub.
+    - Use standard HTTP status codes: 200/201/204/400/401/403/404/422/500.
+    - Pagination: ?page=1&per=20 or cursor-based.
+    - Filtering & sorting via query params.
+    - Protect write endpoints with JWT + role checks (club leader).
+
+DB MODELS (Prisma-like schematic)
+  User {
+    id: uuid
+    email: string (unique)
+    name: string
+    avatarUrl: string?
+    school: string?
+    role: enum (student, leader, admin)
+    hashedPassword: string
+    createdAt, updatedAt
+  }
+
+  Club {
+    id: uuid
+    name: string
+    slug: string (unique)
+    description: string
+    visibility: enum (public, private)
+    inviteCode: string
+    logoUrl: string?
+    createdBy: userId
+    createdAt, updatedAt
+  }
+
+  Membership {
+    id, userId, clubId, role (member|officer|leader), joinedAt, status (active|pending)
+  }
+
+  Event {
+    id, clubId, title, description, startAt, endAt, location, capacity, createdAt
+  }
+
+  Announcement {
+    id, clubId, authorId, title, body, pinned boolean, createdAt
+  }
+
+UI / VISUAL SYSTEM
+  - GRID: 12-column responsive grid, max-width container 1200px, gutter 24px.
+  - SPACING tokens: 4,8,12,16,24,32,48,64
+  - BORDER RADIUS: 8px default, 16px cards
+  - SHADOWS: subtle (0 6px 20px rgba(0,0,0,0.12))
+  - TRANSITIONS: 150ms ease for hover, 250ms for modal fades
+
+  COLORS (CSS variables)
+    --bg-dark: #0B1216   /* deep charcoal */
+    --bg-2:    #0F1A1D
+    --text:    #F7F7F7
+    --muted:   #B4B9BD
+    --accent:  #1F4332   /* Oxford Green / primary accent */
+    --accent-2:#2A6F52
+    --success: #2CB67D
+    --danger:  #E04636
+    --card:    #0C1416
+    --glass:   rgba(255,255,255,0.04)
+
+  TYPOGRAPHY
+    - Font family: Inter or Poppins.
+    - Sizes (desktop base 16px):
+      H1 = 56px / 56px line-height
+      H2 = 40px
+      H3 = 28px
+      Body = 18px, line-height 1.5
+      Small = 14px
+    - Letter spacing: -0.02em for H1/H2, normal for body
+
+  NAVBAR
+    - Height: 72px, padding 24px
+    - Left: logo (48 × 48) + wordmark
+    - Right: nav links, Login (outline), CTA 'Join Free' (pill 48px height accent color)
+    - Sticky top on scroll with subtle blur and decreased height.
+
+  HERO (desktop specs)
+    - Layout: left-aligned content, centered on mobile.
+    - Max width copy column: 680px
+    - H1 example: "Find your perfect co-founder" where 'perfect' uses accent color
+    - Subhead: 18–20px muted paragraph
+    - CTA primary: 56x220 px pill button, accent background, white text
+    - Secondary CTA: text link with subtle underline
+
+  DASHBOARD (basic)
+    - Left sidebar (collapsed on mobile) with icon list: Home, Clubs, Explore, Notifications, Settings
+    - Content area: top summary card with upcoming events, activity feed, quick create buttons
+    - Club page: hero header with club logo, join button, role badge; tabs: Overview | Events | Announcements | Members | Settings
+
+  ACCESSIBILITY
+    - All text contrast >= 4.5:1 (AA).
+    - Keyboard navigable: focus states visible, skip-to-content link at page top.
+    - ARIA: role attributes for menus, dialogs; announcements should use aria-live.
+    - Images have alt text.
+
+SEO & METADATA
+  - Title template: {pageTitle} • Clubroom
+  - Meta description: concise 140 char summary per page
+  - Open Graph: image 1200×630, title, description
+  - Structured data: JSON-LD for organization, WebSite, BreadcrumbList for nested pages.
+
+ANIMATIONS & MICRO-INTERACTIONS
+  - Subtle card lift on hover (translateY(-6px), shadow).
+  - Buttons scale 1.03 on hover, 0.98 on active.
+  - Loading skeletons for lists.
+
+SAMPLE UI TEXT (copy-ready)
+  - Hero CTA: "Get started for free →"
+  - Join button on club page: "Join club" / "Request to join"
+  - Event button: "RSVP" or "Mark as going"
+
+INTERNATIONALIZATION
+  - Use i18n keys from the start. English default.
+
+DELIVERABLES & ROADMAP (first 90 days)
+  - Week 1–2: Auth, DB models, Club create/list, basic pages, deploy.
+  - Week 3–4: Announcements, events, member invites.
+  - Week 5–6: Dashboard UI, calendar view, notifications.
+  - Week 7–12: Onboarding flows, analytics, mobile polish, initial pilot with 3 clubs.
+
+NOTES ON NESTED ROUTING / URL HIERARCHY:
+  - Every major section has a parent route and optional child routes:
+    /features -> /features/tools -> /features/integrations
+    /pricing -> /pricing/schools
+    /dashboard/clubs/:clubId -> /dashboard/clubs/:clubId/events -> /dashboard/clubs/:clubId/events/:eventId
+  - Breadcrumbs for context based on URL segments; removing last path segment moves up hierarchy.
+
+EXAMPLE RESPONSES/REQUESTS (API)
+  POST /api/clubs
+  body:
+    {
+      "name": "Chess Club",
+      "slug": "chess-club",
+      "description": "Casual/competitive chess",
+      "visibility": "public"
+    }
+  response 201:
+    {
+      "id": "uuid",
+      "slug": "chess-club",
+      "createdAt": "2025-08-01T..."
+    }
+
+  GET /api/clubs?search=chess&page=1&per=20
+  response 200: { items: [ {id, name, slug, shortDescription} ], meta: {page, per, total} }
+
+MAINTAINER CONTACT:
+  - Owner: Harsh Brahmbhatt
+  - Email: (user-provided contact)
+
+END OF SITE CORE
