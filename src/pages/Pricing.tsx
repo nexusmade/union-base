@@ -1,13 +1,11 @@
 import SEO from "@/components/SEO";
+import Pricing from "@/components/ui/pricing-component";
 
-export default function Pricing() {
+export default function PricingPage() {
   return (
     <>
-      <SEO title="Pricing" description="Flexible pricing for clubs and schools. Get started free." />
-      <section className="container py-12">
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Pricing</h1>
-        <p className="mt-4 text-muted-foreground">Transparent plans for clubs and schools. Details coming soon.</p>
-      </section>
+      <SEO title="Pricing" description="Simple, transparent pricing for student clubs. Start free, scale as you grow." />
+      <Pricing />
     </>
   );
 }
