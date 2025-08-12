@@ -1,0 +1,1 @@
+/* Empty index.css additions for animation utility classes are handled via Tailwind config. This file intentionally keeps global styles minimal. */
