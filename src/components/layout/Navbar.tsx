@@ -1,5 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import clubroomLogo from "@/assets/clubroom-logo.png";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `px-3 py-2 text-sm ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} transition-colors`;
@@ -9,6 +10,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 bg-background/80 supports-[backdrop-filter]:bg-background/60 backdrop-blur border-b">
       <nav className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2 font-semibold">
+          <img src={clubroomLogo} alt="Clubroom" className="h-8 w-8" />
           <span className="text-base">Clubroom</span>
         </Link>
 
@@ -21,9 +23,6 @@ export default function Navbar() {
           </NavLink>
           <NavLink to="/about" className={navLinkClass} end>
             About
-          </NavLink>
-          <NavLink to="/blog" className={navLinkClass} end>
-            Blog
           </NavLink>
         </div>
 

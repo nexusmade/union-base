@@ -64,7 +64,7 @@ export function EnhancedFeatures() {
             y: 0,
             scale: 1,
             transition: {
-                type: "spring",
+                type: "spring" as const,
                 stiffness: 100,
                 damping: 15,
                 duration: 0.6
@@ -81,7 +81,7 @@ export function EnhancedFeatures() {
             opacity: 1,
             y: 0,
             transition: {
-                type: "spring",
+                type: "spring" as const,
                 stiffness: 100,
                 damping: 15,
                 duration: 0.8
@@ -101,8 +101,8 @@ export function EnhancedFeatures() {
                     className="relative z-10 mx-auto max-w-xl space-y-6 text-center md:space-y-12"
                     variants={headerVariants}
                 >
-                    <h2 className="text-balance text-4xl font-medium lg:text-5xl">Everything you need to run your student club</h2>
-                    <p className="text-lg text-muted-foreground">Clubroom provides all the tools and features that modern student organizations need to stay organized, connected, and productive in one centralized platform.</p>
+                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-black dark:text-white mb-6 tracking-tight">Everything you need to run your student club</h2>
+                    <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">Clubroom provides all the tools and features that modern student organizations need to stay organized, connected, and productive in one centralized platform.</p>
                 </motion.div>
 
                 <motion.div 

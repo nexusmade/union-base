@@ -102,4 +102,24 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground font-inter;
   }
+  
+  /* Consistent typography scale */
+  :root {
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+    --font-size-5xl: 3rem;
+    --font-size-6xl: 3.75rem;
+    
+    /* Typography utilities */
+    --letter-spacing-tight: -0.025em;
+    --letter-spacing-normal: 0em;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.625;
+  }
 }
