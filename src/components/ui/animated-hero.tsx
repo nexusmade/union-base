@@ -67,7 +67,7 @@ function Hero() {
                 Explore features <MoveRight className="w-4 h-4" />
               </Button>
             </Link>
-            <Link to="/pricing">
+            <Link to="/signup">
               <Button size="lg" className="gap-4">
                 Get started for free <MoveRight className="w-4 h-4" />
               </Button>
